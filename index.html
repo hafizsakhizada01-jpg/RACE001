@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07101f">
+<title>RACE 001 — دستیار صوتی و هوشمند</title>
+<style>
+:root{color-scheme:dark;--bg:#050b14;--panel:#0d1625;--line:#1c2d42;--cyan:#00e5ff;--blue:#2979ff;--text:#eff7ff;--muted:#7e9bb6}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 0%,#0c2340 0,#050b14 70%);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh}
+main{max-width:760px;margin:auto;padding:20px 16px 30px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.brand{font-weight:900;letter-spacing:2px;font-size:22px;color:#fff}.brand span{color:var(--cyan);text-shadow:0 0 10px #00e5ff80}
+.pill{border:1px solid #1c3d5a;border-radius:999px;padding:6px 14px;color:var(--cyan);font-size:12px;background:#091424}
+.hero{text-align:center;padding:30px 15px;border:1px solid #132a45;border-radius:28px;background:linear-gradient(160deg,#0a1b30ee,#040c17ff);box-shadow:0 0 40px #00e5ff0b}
+.orb{width:120px;height:120px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--cyan);box-shadow:0 0 30px #00e5ff40,inset 0 0 20px #2979ff30;position:relative}
+.orb:before,.orb:after{content:"";position:absolute;border:1px solid #00e5ff60;border-radius:50%;inset:-8px;animation:pulse 2.5s infinite}
+.orb:after{inset:-16px;opacity:.3;animation-delay:1.25s}
+.face{font-size:42px;filter:drop-shadow(0 0 8px var(--cyan));transition:all 0.3s}
+.speaking .face{animation:bounce 0.5s infinite alternate}
+@keyframes pulse{0%,100%{transform:scale(0.97);opacity:0.2}50%{transform:scale(1.04);opacity:0.8}}
+@keyframes bounce{0%{transform:scale(0.95)}100%{transform:scale(1.08)}}
+h1{margin:8px 0 4px;font-size:28px;letter-spacing:1px} .sub{color:var(--muted);font-size:14px;margin:0}
+.status{display:inline-flex;align-items:center;gap:8px;margin-top:14px;color:#58e99b;font-size:13px;font-weight:600}.dot{width:8px;height:8px;background:#58e99b;border-radius:50%;box-shadow:0 0 12px #58e99b}
+.status.working{color:var(--cyan)}.status.working .dot{background:var(--cyan);box-shadow:0 0 12px var(--cyan);animation:blink 0.8s infinite}
+@keyframes blink{0%,100%{opacity:0.3}50%{opacity:1}}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.tile{background:#0a1424;border:1px solid var(--line);border-radius:18px;padding:16px 8px;text-align:center;color:var(--text);cursor:pointer;transition:all 0.2s;font:inherit}
+.tile:active{transform:scale(0.96);background:#102038}
+.tile b{display:block;font-size:24px;margin-bottom:6px;color:var(--cyan)}
+.tile span{font-size:13px;color:var(--muted)}
+.panel{border:1px solid var(--line);background:#07111e;border-radius:24px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,0.3)}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.panel h2{font-size:16px;margin:0;letter-spacing:0.5px}
+.hint{font-size:12px;color:var(--muted)}
+.messages{display:flex;flex-direction:column;gap:12px;min-height:120px;max-height:300px;overflow-y:auto;margin-bottom:14px;padding-right:4px}
+.msg{padding:12px 16px;border-radius:18px;max-width:85%;line-height:1.6;font-size:14.5px;white-space:pre-wrap;animation:fadeIn 0.3s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.bot{background:#0e223b;border:1px solid #1a395f;align-self:flex-start;border-top-right-radius:4px}
+.user{background:#164373;border:1px solid #235fa1;align-self:flex-end;border-top-left-radius:4px}
+form{display:flex;gap:10px}
+input{min-width:0;flex:1;background:#030811;color:var(--text);border:1px solid #1e3552;border-radius:16px;padding:14px 16px;font:inherit;outline:none;transition:border-color 0.2s}
+input:focus{border-color:var(--cyan)}
+button.send{background:linear-gradient(135deg,#00e5ff,#2979ff);color:#030b14;font-weight:800;border:0;border-radius:16px;padding:0 24px;font:inherit;cursor:pointer;transition:opacity 0.2s}
+button.send:active{opacity:0.8}
+.note{font-size:12px;color:var(--muted);line-height:1.6;margin:14px 4px 0;text-align:center}
+footer{text-align:center;color:#475d75;font-size:12px;padding:24px 0 10px;letter-spacing:1px}
+</style>
+</head>
+<body>
+<main>
+<header><div class="brand">RACE <span>001</span></div><div class="pill">CORE AI V1.0</div></header>
+<section class="hero" id="hero-section">
+  <div class="orb" id="avatar-orb"><div class="face" id="face-icon">⚡</div></div>
+  <h1>ریس ۰۰۱</h1>
+  <p class="sub">سیستم هوش مصنوعی شخصی زنده و فعال</p>
+  <div class="status" id="status-container"><i class="dot"></i><span id="status-text">آماده به کار</span></div>
+</section>
+<section class="grid" aria-label="بخش‌ها">
+  <button class="tile" onclick="triggerSystem('حافظه')"><b>🧠</b><span>حافظه فعال</span></button>
+  <button class="tile" onclick="triggerSystem('مهارت‌ها')"><b>🛠️</b><span>مهارت‌ها</span></button>
+  <button class="tile" onclick="triggerSystem('شخصیت')"><b>🎭</b><span>تنظیم رفتار</span></button>
+</section>
+<section class="panel">
+  <div class="panel-head"><h2>هسته ارتباطی مرکزی</h2><span class="hint" id="mode-badge">پتـرو سایـبر</span></div>
+  <div class="messages" id="messages">
+    <div class="msg bot">سلام رفیق! من ریس ۰۰۱ هستم، دستیار شخصی و هوشمند شما. هسته مرکزی پردازش صوتی و متنی من با موفقیت فعال شد. هر سوالی داری از من بپرس!</div>
+  </div>
+  <form id="chat-form">
+    <input id="user-input" autocomplete="off" placeholder="دستور یا پیام خود را بنویسید..." aria-label="پیام">
+    <button class="send" type="submit">ارسال</button>
+  </form>
+  <p class="note">سیستم صوتی فعال است. پاسخ‌ها به صورت متنی و صوتی همزمان پردازش می‌شوند.</p>
+</section>
+<footer>RACE MINI-CONSOLE // 2026</footer>
+</main>
+<script>
+const messagesContainer = document.getElementById('messages');
+const chatForm = document.getElementById('chat-form');
+const userInput = document.getElementById('user-input');
+const statusText = document.getElementById('status-text');
+const statusContainer = document.getElementById('status-container');
+const avatarOrb = document.getElementById('avatar-orb');
+const faceIcon = document.getElementById('face-icon');
+
+const botResponses = {
+    "سلام": "سلام رفیق عزیز! خوشحالم که اینجا هستی. من ریس ۰۰۱ هستم، چطور می‌تونم کمکت کنم؟",
+    "چطور هستی": "من عالی هستم! در اوج سرعت و آمادگی پردازش داده‌ها. شما چطور هستید؟",
+    "نام تو چیست": "نام من ریس ۰۰۱ (RACE 001) است، اولین نسل از دستیارهای هوشمند اختصاصی شما.",
+    "وظیفه تو چیست": "وظیفه من کمک به شما در برنامه‌نویسی، یادگیری زبان، مدیریت کارهای شخصی و پاسخ صوتی به سوالات شماست رفیق.",
+    "حافظه": "سیستم حافظه بلندمدت فعال است و تمام اولویت‌های شخصی شما را ذخیره می‌کند.",
+    "مهارت‌ها": "مهارت‌های صوتی، کدنویسی سریع و تحلیل منطقی به هسته اصلی من اضافه شده است.",
+    "شخصیت": "رفتار من در حال حاضر روی حالت 'آینده‌نگر و صمیمی' (Cyber-Casual) تنظیم شده است رفیق."
+};
+
+function speakText(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'fa-IR';
+        utterance.pitch = 0.9;
+        utterance.rate = 1.0;
+        
+        utterance.onstart = () => {
+            avatarOrb.classList.add('speaking');
+            faceIcon.textContent = "◉‿◉";
+        };
+        utterance.onend = () => {
+            avatarOrb.classList.remove('speaking');
+            faceIcon.textContent = "⚡";
+        };
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+function processAI(text) {
+    statusContainer.className = "status working";
+    statusText.textContent = "در حال پردازش منطقی...";
+    faceIcon.textContent = "⏳";
+    
+    setTimeout(() => {
+        let reply = "پیام شما در حافظه عصبی ریس ۰۰۱ ثبت شد. من کاملاً متوجه شدم! چه کار دیگری می‌توانم برایتان انجام دهم؟";
+        
+        const cleanText = text.trim().replace(/[؟?.!]/g, '');
+        for (const key in botResponses) {
+            if (cleanText.includes(key)) {
+                reply = botResponses[key];
+                break;
+            }
+        }
+        
+        statusContainer.className = "status";
+        statusText.textContent = "آماده به کار";
+        faceIcon.textContent = "⚡";
+        
+        addMessage(reply, 'bot');
+        speakText(reply);
+    }, 800);
+}
+
+function addMessage(text, sender) {
+    const msgEl = document.createElement('div');
+    msgEl.className = `msg ${sender}`;
+    msgEl.textContent = text;
+    messagesContainer.appendChild(msgEl);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = userInput.value.trim();
+    if (!text) return;
+    
+    addMessage(text, 'user');
+    userInput.value = '';
+    
+    processAI(text);
+});
+
+function triggerSystem(systemName) {
+    addMessage(`سیستم ${systemName} فراخوانی شد.`, 'user');
+    processAI(systemName);
+}
+
+setTimeout(() => { faceIcon.textContent = "⚡"; }, 1000);
+</script>
+</body>
+</html>
