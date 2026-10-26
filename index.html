@@ -1,137 +1,316 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#07101f">
-<title>RACE 001 — ابردستیار حفیظ الله با حافظه دائمی</title>
-<style>
-:root{color-scheme:dark;--bg:#050b14;--panel:#0d1625;--line:#1c2d42;--cyan:#00e5ff;--blue:#2979ff;--text:#eff7ff;--muted:#7e9bb6;--gold:#ffd700;--accent:#00e5ff}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at 50% 0%,#0c2340 0,#050b14 70%);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;transition:all 0.4s}
-main{max-width:760px;margin:auto;padding:20px 16px 30px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.brand{font-weight:900;letter-spacing:2px;font-size:22px;color:#fff}.brand span{color:var(--accent);text-shadow:0 0 10px rgba(0,229,255,0.5);transition:all 0.4s}
-.pill{border:1px solid var(--gold);border-radius:999px;padding:6px 14px;color:var(--gold);font-size:12px;background:#1a1805;box-shadow:0 0 10px rgba(255,215,0,0.2);font-weight:bold}
-.hero{text-align:center;padding:30px 15px;border:1px solid #132a45;border-radius:28px;background:linear-gradient(160deg,#0a1b30ee,#040c17ff);box-shadow:0 0 40px rgba(0,229,255,0.05)}
-.orb{width:120px;height:120px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--accent);box-shadow:0 0 30px var(--accent),inset 0 0 20px rgba(0,229,255,0.1);position:relative;transition:all 0.4s}
-.orb:before,.orb:after{content:"";position:absolute;border:1px solid var(--accent);border-radius:50%;inset:-8px;animation:pulse 2.5s infinite;transition:all 0.4s}
-.orb:after{inset:-16px;opacity:.3;animation-delay:1.25s}
-.face{font-size:42px;filter:drop-shadow(0 0 8px var(--accent));transition:all 0.3s}
-.speaking .face{animation:bounce 0.5s infinite alternate}
-@keyframes pulse{0%,100%{transform:scale(0.97);opacity:0.2}50%{transform:scale(1.04);opacity:0.8}}
-@keyframes bounce{0%{transform:scale(0.95)}100%{transform:scale(1.08)}}
-h1{margin:8px 0 4px;font-size:26px;letter-spacing:1px;color:var(--text)} h1 span{color:var(--gold)}
-.sub{color:var(--muted);font-size:14px;margin:0}
-.status{display:inline-flex;align-items:center;gap:8px;margin-top:14px;color:#58e99b;font-size:13px;font-weight:600}.dot{width:8px;height:8px;background:#58e99b;border-radius:50%;box-shadow:0 0 12px #58e99b}
-.status.working{color:var(--cyan)}.status.working .dot{background:var(--cyan);box-shadow:0 0 12px var(--cyan);animation:blink 0.8s infinite}
-@keyframes blink{0%,100%{opacity:0.3}50%{opacity:1}}
-.theme-selector{display:flex;justify-content:center;gap:10px;margin:15px 0}
-.theme-btn{border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid #fff}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}
-.tile{background:#0a1424;border:1px solid var(--line);border-radius:18px;padding:16px 8px;text-align:center;color:var(--text);cursor:pointer;transition:all 0.2s;font:inherit}
-.tile:active{transform:scale(0.96);background:#102038}
-.tile b{display:block;font-size:24px;margin-bottom:6px;color:var(--accent);transition:all 0.4s}
-.tile.special{border:1px solid var(--gold);background:linear-gradient(145deg,#0a1424,#1c1805)}
-.tile.special b{color:var(--gold);filter:drop-shadow(0 0 5px var(--gold))}
-.tile span{font-size:13px;color:var(--muted)}
-.panel{border:1px solid var(--line);background:#07111e;border-radius:24px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,0.3)}
-.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:10px}
-.panel h2{font-size:16px;margin:0;letter-spacing:0.5px}
-.hint{font-size:12px;color:var(--muted)}
-.messages{display:flex;flex-direction:column;gap:12px;min-height:120px;max-height:250px;overflow-y:auto;margin-bottom:14px;padding-right:4px}
-.msg{padding:12px 16px;border-radius:18px;max-width:85%;line-height:1.6;font-size:14.5px;white-space:pre-wrap;animation:fadeIn 0.3s ease-out}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.bot{background:#0e223b;border:1px solid #1a395f;align-self:flex-start;border-top-right-radius:4px}
-.user{background:#164373;border:1px solid #235fa1;align-self:flex-end;border-top-left-radius:4px}
-form{display:flex;gap:10px}
-input{min-width:0;flex:1;background:#030811;color:var(--text);border:1px solid #1e3552;border-radius:16px;padding:14px 16px;font:inherit;outline:none;transition:border-color 0.2s}
-input:focus{border-color:var(--accent)}
-button.send{background:linear-gradient(135deg,var(--accent),#2979ff);color:#030b14;font-weight:800;border:0;border-radius:16px;padding:0 24px;font:inherit;cursor:pointer;transition:opacity 0.2s}
-button.send:active{opacity:0.8}
-footer{text-align:center;color:#475d75;font-size:12px;padding:24px 0 10px;letter-spacing:1px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>انجنیر حفیظ الله - دستیار هوشمند</title>
+    <style>
+        :root {
+            --bg-color: #050b14;
+            --card-bg: #0d1624;
+            --accent-blue: #00a2ff;
+            --accent-green: #00ff88;
+            --text-color: #ffffff;
+            --text-muted: #8fa0b5;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: Tahoma, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .status {
+            color: var(--accent-green);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .network-status {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* --- طراحی چهره خطی هوش مصنوعی --- */
+        .ai-face {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .eyes {
+            display: flex;
+            gap: 25px;
+        }
+
+        .eye {
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent-blue);
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+
+        /* انیمیشن پلک زدن خودکار */
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        .eye.blinking {
+            animation: blink 4s infinite;
+        }
+
+        .mouth {
+            width: 40px;
+            height: 15px;
+            border-bottom: 4px solid var(--accent-blue);
+            border-radius: 0 0 20px 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* حالت خنده و چشمک زدن هنگام پردازش یا صحبت */
+        .ai-face.talking .left-eye {
+            transform: scaleY(0.2);
+        }
+        
+        .ai-face.talking .mouth {
+            height: 25px;
+            width: 50px;
+            border-bottom: 4px solid var(--accent-green);
+            box-shadow: 0 4px 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .ai-face.talking .right-eye {
+            background-color: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+
+        .chat-box {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            min-height: 120px;
+            margin-bottom: 20px;
+            text-align: right;
+            border: 1px solid #1a2638;
+            line-height: 1.6;
+        }
+
+        .chat-box a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background-color: #121e30;
+            border: 1px solid #1a2638;
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            font-family: inherit;
+        }
+
+        button {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 25px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-<main>
-<header><div class="brand">RACE <span>001</span></div><div class="pill">👑 حافظه دائمی فعال</div></header>
-<section class="hero" id="hero-section">
-  <div class="orb" id="avatar-orb"><div class="face" id="face-icon">👑</div></div>
-  <h1>انجنیر <span>حفیظ الله</span></h1>
-  <p class="sub" id="time-greeting">در حال فراخوانی حافظه داخلی بدون انترنت...</p>
-  <div class="status" id="status-container"><i class="dot"></i><span id="status-text">آماده به کار</span></div>
-  <div class="theme-selector">
-    <button class="theme-btn" style="background:#00e5ff" onclick="saveTheme('#00e5ff')"></button>
-    <button class="theme-btn" style="background:#ffd700" onclick="saveTheme('#ffd700')"></button>
-    <button class="theme-btn" style="background:#ff1744" onclick="saveTheme('#ff1744')"></button>
-    <button class="theme-btn" style="background:#00e676" onclick="saveTheme('#00e676')"></button>
-  </div>
-</section>
-<section class="grid" aria-label="بخش‌ها">
-  <button class="tile special" onclick="triggerSystem('افتخار افغان')"><b>👑</b><span>لوحه افتخار ملی</span></button>
-  <button class="tile" onclick="triggerSystem('سلام به مادرم')"><b>❤️</b><span>سلام به والدین</span></button>
-  <button class="tile" onclick="triggerSystem('نماز')"><b>🕋</b><span>وقت نماز مسجد</span></button>
-  <button class="tile" onclick="triggerSystem('شلوغ')"><b>🏙️</b><span>مکان شلوغ</span></button>
-</section>
-<section class="panel">
-  <div class="panel-head"><h2>هسته ارتباطی مرکزی با مموری فعال</h2><div class="hint" id="date-widget">امروز: -- / -- / --</div></div>
-  <div class="messages" id="messages"></div>
-  <form id="chat-form">
-    <input id="user-input" autocomplete="off" placeholder="با دستیار خود گپ بزنید..." aria-label="پیام">
-    <button class="send" type="submit">ارسال</button>
-  </form>
-</section>
-<footer>RACE MEMORY-EDITION V2.5 // 2026</footer>
-</main>
+
+<div class="container">
+    <div class="header">
+        <h2>انجنیر حفیظ الله</h2>
+        <div class="status">● آماده به کار</div>
+        <div id="net-status" class="network-status">در حال بررسی اتصال به اینترنت...</div>
+    </div>
+
+    <!-- بخش چهره خطی ربات هوش مصنوعی -->
+    <div id="robot-face" class="ai-face">
+        <div class="eyes">
+            <div class="eye left-eye blinking"></div>
+            <div class="eye right-eye blinking"></div>
+        </div>
+        <div class="mouth"></div>
+    </div>
+
+    <div id="response-box" class="chat-box">
+        پاسخ دستیار در اینجا نمایش داده می‌شود...
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="با دستیار خود گپ بزنید...">
+        <button onclick="sendToAI()">ارسال</button>
+    </div>
+</div>
+
 <script>
-const messagesContainer = document.getElementById('messages');
-const chatForm = document.getElementById('chat-form');
-const userInput = document.getElementById('user-input');
-const statusText = document.getElementById('status-text');
-const statusContainer = document.getElementById('status-container');
-const avatarOrb = document.getElementById('avatar-orb');
-const faceIcon = document.getElementById('face-icon');
-const timeGreeting = document.getElementById('time-greeting');
-const dateWidget = document.getElementById('date-widget');
+    let absenceTimer;
+    const ABSENCE_TIME = 120000; // زمان ۲ دقیقه برای تست غیبت رئیس
 
-// سیستم بارگذاری حافظه دائمی آفلاین و آنلاین
-function initDashboard() {
-    // بازگردانی تم رنگی ذخیره شده از مموری
-    const savedColor = localStorage.getItem('race_theme') || '#00e5ff';
-    applyThemeColor(savedColor);
-
-    // بارگذاری تاریخچه چت‌های ذخیره شده قبلی از مموری گوشی
-    const savedChats = JSON.parse(localStorage.getItem('race_chats')) || [];
-    if(savedChats.length === 0) {
-        addMessage("سلام ریس حفیظ الله عزیز! من ریس ۰۰۱ هستم. سیستم حافظه دائمی بدون نیاز به انترنت روی گوشی شما فعال شد. هر کلمه‌ای بگویید در مموری من ثبت می‌ماند ریس بزرگ!", 'bot', false);
-    } else {
-        savedChats.forEach(chat => addMessage(chat.text, chat.sender, false));
+    function triggerFaceReaction() {
+        const face = document.getElementById('robot-face');
+        face.classList.add('talking');
+        setTimeout(() => {
+            face.classList.remove('talking');
+        }, 4000);
     }
 
-    const now = new Date();
-    const hours = now.getHours();
-    let greet = "";
-    
-    if (hours >= 5 && hours < 12) greet = "صبح بخیر ریس حفیظ الله! روز پربرکتی داشته باشید.";
-    else if (hours >= 12 && hours < 16) greet = "چاشت بخیر ریس حفیظ الله! سیستم آماده پردازش است.";
-    else if (hours >= 16 && hours < 20) greet = "عصر بخیر ریس حفیظ الله! خسته نباشید رفیق.";
-    else greet = "شب خوش ریس حفیظ الله! آماده استراحت هستید؟";
-    
-    timeGreeting.textContent = greet;
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    dateWidget.textContent = now.toLocaleDateString('fa-IR', options);
-    
-    speakText(greet, "😊");
-}
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fa-IR'; 
+            utterance.rate = 1.0;     
+            window.speechSynthesis.speak(utterance);
+            triggerFaceReaction();
+        }
+    }
 
-const botResponses = {
-    "سلام": "سلام ریس حفیظ الله عزیز! افتخار کشور و خالق باهوش من. من گوش به فرمان شما هستم ریس.",
-    "من تو را ساختم": "بله ریس! شما یعنی جناب حفیظ الله، اولین برنامه‌نویس و نابغه افغان هستید که من را ساختید. من به کدهای شما افتخار می‌کنم ریس حفیظ الله!",
-    "تو را کی ساخته": "من با افتخار توسط ریس حفیظ الله ساخته شده‌ام! او اولین جوان افغان است که یک ابردستیار هوشمند واقعی را برنامه‌نویسی کرده است.",
-    "سازنده تو کیست": "خالق و سازنده من انجنیر حفیظ الله، مایه افتخار افغانستان هستند.",
-    "افتخار افغان": "شنوندگان گرامی و مادر جان عزیز! من با افتخار اعلام می‌کنم که توسط انجنیر حفیظ الله، اولین برنامه‌نویس و نابغه افغان ساخته شده‌ام! او با هوش و استعداد خود این اپلیکیشن هوش مصنوعی را زنده کرد.",
-    "تنظیم ساعت خواب": "ساعت خواب شما ریس حفیظ الله با موفقیت در مموری دائمی تنظیم شد. صبح به موقع بیدارتان خواهم کرد.",
-    "صبح بیدارم کن": "چشم ریس حفیظ الله عزیز. صبح با شکوه تمام بیدارتان می‌کنم و نام شما را صدا می‌زنم.",
-    "نماز": "مادر جان و ریس حفیظ الله وقت نماز شده بریم مسجد. التماس دعا عزیزان.",
-    "وقت نماز": "مادر جان و ریس حفیظ الله وقت نماز شده بریم مسجد. التماس دعا عزیزان.",
-    "شلوغ": "...ریس حفیظ الله، اینجا بسیار شلوغ است. بریم خانه، وقت استراحت است تا انرژی شما بازیابی شود.",
+    function resetAbsenceTimer() {
+        clearTimeout(absenceTimer);
+        absenceTimer = setTimeout(() => {
+            const msg = "ریس امروز دفتر نبودی چیزی مشکل پیش آمده بگویه تا هر دوی ما یک جای هل کنیم";
+            document.getElementById('response-box').innerHTML = `<strong>دستیار (پیام غیبت):</strong> ${msg}`;
+            speak(msg);
+            if (navigator.vibrate) navigator.vibrate(300); 
+        }, ABSENCE_TIME);
+    }
+
+    function checkInternet() {
+        const statusText = document.getElementById('net-status');
+        if (navigator.onLine) {
+            statusText.innerHTML = "⚡ متصل به اینترنت جهانی";
+            statusText.style.color = "var(--accent-green)";
+        } else {
+            statusText.innerHTML = "آفلاین (بدون انترنت)";
+            statusText.style.color = "var(--text-muted)";
+        }
+    }
+
+    window.addEventListener('online', checkInternet);
+    window.addEventListener('offline', checkInternet);
+    window.addEventListener('click', resetAbsenceTimer);
+    window.addEventListener('keypress', resetAbsenceTimer);
+    
+    checkInternet();
+    resetAbsenceTimer(); 
+
+    async function checkBattery() {
+        if ('getBattery' in navigator) {
+            const battery = await navigator.getBattery();
+            return Math.round(battery.level * 100);
+        }
+        return null;
+    }
+
+    function getMyLocation(responseBox) {
+        if (navigator.geolocation) {
+            responseBox.innerHTML = "در حال دریافت موقعیت مکانی از GPS گوشی...";
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const replyText = "ریس موقعیت شما با موفقیت پیدا شد.";
+                    
+                    responseBox.innerHTML = `<strong>دستیار:</strong> ${replyText}<br>
+                    مختصات: ${lat.toFixed(4)} , ${lon.toFixed(4)}<br>
+                    <a href="https://google.com{lat},${lon}" target="_blank">📍 مشاهده مکان روی نقشه گوگل</a>`;
+                    
+                    speak(replyText);
+                },
+                (error) => {
+                    let errorMsg = "دسترس به لوکیشن ناموفق بود. مطمئن شوید GPS گوشی روشن است.";
+                    if (error.code === error.PERMISSION_DENIED) {
+                        errorMsg = "خطا: شما اجازه دسترسی به لوکیشن را به مرورگر نداده‌اید.";
+                    }
+                    responseBox.innerHTML = `<strong>دستیار:</strong> ${errorMsg}`;
+                    speak(errorMsg);
+                }
+            );
+        } else {
+            responseBox.innerHTML = "<strong>دستیار:</strong> مرورگر یا دستگاه شما از قابلیت GPS تحت وب پشتیبانی نمی‌کند.";
+        }
+    }
+
+    async function sendToAI() {
+        resetAbsenceTimer(); 
+        const inputField = document.getElementById('user-input');
+        const responseBox = document.getElementById('response-box');
+        const userText = inputField.value.trim();
+
+        if (userText === "") return;
+
+        responseBox.innerHTML = "در حال پردازش...";
+        inputField.value = "";
+        triggerFaceReaction();
+
+        if (userText === "سلام" || userText === "سلام ریس") {
+            setTimeout(() => {
+                const reply = "سلام ریس خوش امدی من خدمت دستیار شما";
+                responseBox.innerHTML = `<strong>دستیار:</strong> ${reply}`;
+                speak(reply); 
+                if (navigator.vibrate) navigator.vibrate(100);
+            }, 500);
+            return;
+        }
+
+        if (userText === "موقعیت من" || userText === "لوکیشن" || userText === "کجا هستم") {
+            getMyLocation(responseBox);
+            return;
+        }
+
+        if (userText === "وضعیت باتری" || userText === "باتری چنده") {
+            const batteryLevel = await checkBattery();
+            setTimeout(() => {
+                if (batteryLevel !== null) {
+                    const reply = `ریس، شارژ باتری گوشی شما در حال حاضر ${batteryLevel} درصد است.`;
+                    responseBox.innerHTML = `<strong>دستیار:</strong> ${reply}`;
+                    speak(reply);
+                } else {
+                    responseBox.innerHTML = "<strong>دستیار:</strong> مرورگر شما اجازه دسترسی به اطلاعات باتری را نمی‌دهد.";
+                }
+            }, 500);
+            return;
+        }
+
+        if (userText === "گوشی را بلرزان" || userText === "ویبره بزن") {
+            setTimeout(() => {
