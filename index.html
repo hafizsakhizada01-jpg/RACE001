@@ -47,7 +47,6 @@
             margin-top: 5px;
         }
 
-        /* --- طراحی چهره خطی هوش مصنوعی --- */
         .ai-face {
             width: 100px;
             height: 100px;
@@ -73,7 +72,6 @@
             box-shadow: 0 0 10px var(--accent-blue);
         }
 
-        /* انیمیشن پلک زدن خودکار */
         @keyframes blink {
             0%, 90%, 100% { transform: scaleY(1); }
             95% { transform: scaleY(0.1); }
@@ -91,7 +89,6 @@
             transition: all 0.3s ease;
         }
 
-        /* حالت خنده و چشمک زدن هنگام پردازش یا صحبت */
         .ai-face.talking .left-eye {
             transform: scaleY(0.2);
         }
@@ -160,10 +157,9 @@
     <div class="header">
         <h2>انجنیر حفیظ الله</h2>
         <div class="status">● آماده به کار</div>
-        <div id="net-status" class="network-status">در حال بررسی اتصال به اینترنت...</div>
+        <div id="net-status" class="network-status">متصل به شبکه</div>
     </div>
 
-    <!-- بخش چهره خطی ربات هوش مصنوعی -->
     <div id="robot-face" class="ai-face">
         <div class="eyes">
             <div class="eye left-eye blinking"></div>
@@ -184,14 +180,16 @@
 
 <script>
     let absenceTimer;
-    const ABSENCE_TIME = 120000; // زمان ۲ دقیقه برای تست غیبت رئیس
+    const ABSENCE_TIME = 120000; 
 
     function triggerFaceReaction() {
         const face = document.getElementById('robot-face');
-        face.classList.add('talking');
-        setTimeout(() => {
-            face.classList.remove('talking');
-        }, 4000);
+        if(face) {
+            face.classList.add('talking');
+            setTimeout(() => {
+                face.classList.remove('talking');
+            }, 4000);
+        }
     }
 
     function speak(text) {
@@ -209,29 +207,14 @@
         clearTimeout(absenceTimer);
         absenceTimer = setTimeout(() => {
             const msg = "ریس امروز دفتر نبودی چیزی مشکل پیش آمده بگویه تا هر دوی ما یک جای هل کنیم";
-            document.getElementById('response-box').innerHTML = `<strong>دستیار (پیام غیبت):</strong> ${msg}`;
+            document.getElementById('response-box').innerHTML = "<strong>دستیار (پیام غیبت):</strong> " + msg;
             speak(msg);
             if (navigator.vibrate) navigator.vibrate(300); 
         }, ABSENCE_TIME);
     }
 
-    function checkInternet() {
-        const statusText = document.getElementById('net-status');
-        if (navigator.onLine) {
-            statusText.innerHTML = "⚡ متصل به اینترنت جهانی";
-            statusText.style.color = "var(--accent-green)";
-        } else {
-            statusText.innerHTML = "آفلاین (بدون انترنت)";
-            statusText.style.color = "var(--text-muted)";
-        }
-    }
-
-    window.addEventListener('online', checkInternet);
-    window.addEventListener('offline', checkInternet);
     window.addEventListener('click', resetAbsenceTimer);
     window.addEventListener('keypress', resetAbsenceTimer);
-    
-    checkInternet();
     resetAbsenceTimer(); 
 
     async function checkBattery() {
@@ -244,30 +227,23 @@
 
     function getMyLocation(responseBox) {
         if (navigator.geolocation) {
-            responseBox.innerHTML = "در حال دریافت موقعیت مکانی از GPS گوشی...";
+            responseBox.innerHTML = "در حال دریافت موقعیت مکانی...";
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
                     const replyText = "ریس موقعیت شما با موفقیت پیدا شد.";
                     
-                    responseBox.innerHTML = `<strong>دستیار:</strong> ${replyText}<br>
-                    مختصات: ${lat.toFixed(4)} , ${lon.toFixed(4)}<br>
-                    <a href="https://google.com{lat},${lon}" target="_blank">📍 مشاهده مکان روی نقشه گوگل</a>`;
+                    responseBox.innerHTML = "<strong>دستیار:</strong> " + replyText + "<br><a href='https://google.com" + lat + "," + lon + "' target='_blank'>📍 مشاهده مکان روی نقشه گوگل</a>";
                     
                     speak(replyText);
                 },
-                (error) => {
-                    let errorMsg = "دسترس به لوکیشن ناموفق بود. مطمئن شوید GPS گوشی روشن است.";
-                    if (error.code === error.PERMISSION_DENIED) {
-                        errorMsg = "خطا: شما اجازه دسترسی به لوکیشن را به مرورگر نداده‌اید.";
-                    }
-                    responseBox.innerHTML = `<strong>دستیار:</strong> ${errorMsg}`;
+                () => {
+                    const errorMsg = "دسترسی به لوکیشن ناموفق بود. مطمئن شوید GPS روشن است.";
+                    responseBox.innerHTML = "<strong>دستیار:</strong> " + errorMsg;
                     speak(errorMsg);
                 }
             );
-        } else {
-            responseBox.innerHTML = "<strong>دستیار:</strong> مرورگر یا دستگاه شما از قابلیت GPS تحت وب پشتیبانی نمی‌کند.";
         }
     }
 
@@ -286,7 +262,7 @@
         if (userText === "سلام" || userText === "سلام ریس") {
             setTimeout(() => {
                 const reply = "سلام ریس خوش امدی من خدمت دستیار شما";
-                responseBox.innerHTML = `<strong>دستیار:</strong> ${reply}`;
+                responseBox.innerHTML = "<strong>دستیار:</strong> " + reply;
                 speak(reply); 
                 if (navigator.vibrate) navigator.vibrate(100);
             }, 500);
@@ -302,11 +278,11 @@
             const batteryLevel = await checkBattery();
             setTimeout(() => {
                 if (batteryLevel !== null) {
-                    const reply = `ریس، شارژ باتری گوشی شما در حال حاضر ${batteryLevel} درصد است.`;
-                    responseBox.innerHTML = `<strong>دستیار:</strong> ${reply}`;
+                    const reply = "ریس، شارژ باتری گوشی شما در حال حاضر " + batteryLevel + " درصد است.";
+                    responseBox.innerHTML = "<strong>دستیار:</strong> " + reply;
                     speak(reply);
                 } else {
-                    responseBox.innerHTML = "<strong>دستیار:</strong> مرورگر شما اجازه دسترسی به اطلاعات باتری را نمی‌دهد.";
+                    responseBox.innerHTML = "<strong>دستیار:</strong> عدم دسترسی به باتری.";
                 }
             }, 500);
             return;
@@ -314,3 +290,19 @@
 
         if (userText === "گوشی را بلرزان" || userText === "ویبره بزن") {
             setTimeout(() => {
+                if (navigator.vibrate) {
+                    navigator.vibrate(200);
+                    const reply = "دستور انجام شد، گوشی شما لرزید ریس.";
+                    responseBox.innerHTML = "<strong>دستیار:</strong> " + reply;
+                    speak(reply);
+                }
+            }, 500);
+            return;
+        }
+
+        responseBox.innerHTML = "پیام شما دریافت شد ریس.";
+    }
+</script>
+
+</body>
+</html>
