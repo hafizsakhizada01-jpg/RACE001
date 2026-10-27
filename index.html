@@ -1,3 +1,200 @@
+import ospip install fastapi uvicorn openai dotenv python-multipart
+
+import asyncio
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+from openai import AsyncOpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app = FastAPI()
+"use client";
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+
+export default function VoiceAgent() {
+  const [status, setStatus] = useState("READY"); // وضعیت‌ها: READY, SPEAKING, LISTENING
+  const [inputText, setInputText] = useState("");
+  const [audioUrl, setAudioUrl] = useState(null);
+  
+  const socketRef = useRef(null);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    # اتصال به وب‌سوکت پایتون (بک‌آند)
+    socketRef.current = new WebSocket("ws://localhost:8000/ws/voice");
+
+    socketRef.current.onopen = () => {
+      console.log("Connected to voice backend server");
+    };
+
+    socketRef.current.onmessage = async (event) => {
+      setStatus("SPEAKING");
+      // دریافت دیتای باینری صدا از بک‌آند و تبدیل آن به فرمت قابل پخش در مرورگر
+      const blob = new Blob([event.data], { type: 'audio/mp3' });
+      const url = URL.createObjectURL(blob);
+      setAudioUrl(url);
+    };
+
+    return () => {
+      if (socketRef.current) socketRef.current.close();
+    };
+  }, []);
+
+  // هندل کردن اتمام صدای دستیار و بازگشت به حالت آماده‌باش
+  const handleAudioEnded = () => {
+    setStatus("READY");
+  };
+
+  const handleSendMessage = () => {
+    if (!inputText.trim()) return;
+    setStatus("LISTENING");
+    // ارسال متن به بک‌آند صوتی از طریق وب‌سوکت
+    socketRef.current.send(inputText);
+    setInputText("");
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white font-sans overflow-hidden">
+      
+      {/* هدر بالایی شبیه به ویدیو */}
+      <div className="absolute top-8 text-zinc-500 tracking-widest text-xs">
+        VOICE ASSISTANT INTERFACE
+      </div>
+
+      {/* ۱. انیمیشن ذرات نوری و هاله صدا (Visualizer) */}
+      <div className="relative flex items-center justify-center w-80 h-80">
+        
+        {/* هاله نوری بیرونی (پالس داینامیک) */}
+        <motion.div
+          animate={{
+            scale: status === "SPEAKING" ? [1, 1.25, 1] : status === "LISTENING" ? [1, 1.1, 1] : 1,
+            opacity: status === "SPEAKING" ? [0.4, 0.7, 0.4] : 0.3
+          }}
+          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+          className={`absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-700 blur-3xl`}
+        />
+
+        {/* حلقه میانی شبیه به هاله تصویر */}
+        <motion.div 
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
+          className="absolute w-64 h-64 border border-dashed border-cyan-400/40 rounded-full"
+        />
+
+        {/* هسته مرکزی انیمیشن و وضعیت جاری دستیار */}
+        <div className="z-10 flex flex-col items-center justify-center w-48 h-48 rounded-full bg-zinc-900 border border-zinc-800 shadow-2xl">
+          <motion.div
+            animate={status === "SPEAKING" ? {
+              scale: [1, 1.15, 0.95, 1.05, 1],
+              borderColor: ["#22d3ee", "#3b82f6", "#22d3ee"]
+            } : { scale: 1 }}
+            transition={{ repeat: status === "SPEAKING" ? Infinity : 0, duration: 1.2 }}
+            className="w-36 h-36 rounded-full bg-black flex flex-col items-center justify-center border-2 border-zinc-700"
+          >
+            <span className={`text-xs font-mono tracking-widest ${
+              status === "SPEAKING" ? "text-cyan-400 animate-pulse" : 
+              status === "LISTENING" ? "text-amber-400" : "text-zinc-500"
+            }`}>
+              STATUS: {status}
+            </span>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* ۲. تگ صدای مخفی برای پخش خروجی پایتون */}
+      {audioUrl && (
+        <audio 
+          ref={audioRef} 
+          src={audioUrl} 
+          autoPlay 
+          onEnded={handleAudioEnded}
+          className="hidden"
+        />
+      )}
+
+      {/* ۳. بخش کنترلر و ورودی متنی / صوتی پایین صفحه */}
+      <div className="mt-12 z-20 w-full max-w-md px-6">
+        <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-full p-2 pl-5 shadow-xl">
+          <input
+            type="text"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+            placeholder="با دستیار صحبت کنید یا بنویسید..."
+            className="flex-grow bg-transparent text-sm text-white focus:outline-none placeholder-zinc-600"
+          />
+          <button 
+            onClick={handleSendMessage}
+            className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold p-2 px-5 rounded-full text-xs tracking-wider transition-colors"
+          >
+            ارسال
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+# تنظیمات CORS برای اتصال بدون مشکل فرانت‌آند
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# مقداردهی اولیه کلاینت هوش مصنوعی OpenAI
+# حتماً باید OPENAI_API_KEY را در سیستم یا فایل .env تعریف کرده باشید
+openai_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+@app.websocket("/ws/voice")
+async def voice_stream_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    print("Client connected to Voice Agent")
+    
+    try:
+        while True:
+            # دریافت پیام متنی یا دیتای صوتی از فرانت‌آند (مثلاً متنی که کاربر تایپ کرده یا حرف زده)
+            data = await websocket.receive_text()
+            
+            # ۱. ارسال درخواست به مدل زبانی برای گرفتن پاسخ متنی به صورت صوتی
+            # با استفاده از مدل جدید openai قابلیت تبدیل مستقیم متن به صدا وجود دارد
+            response = await openai_client.chat.completions.create(
+                model="gpt-4o-mini", # یا هر مدلی که برای دستیار استفاده می‌کنید
+                messages=[
+                    {"role": "system", "content": "You are a helpful, friendly voice assistant. Keep answers brief and conversational."},
+                    {"role": "user", "content": data}
+                ]
+            )
+            
+            ai_text_response = response.choices[0].message.content
+            print(f"AI Response: {ai_text_response}")
+            
+            # ۲. تبدیل پاسخ متنی هوش مصنوعی به صدای طبیعی (TTS) به صورت زنده
+            # استفاده از مدل tts-1 شرکت OpenAI برای تبدیل متن به گفتار
+            audio_response = await openai_client.audio.speech.create(
+                model="tts-1",
+                voice="alloy", # صداهای دیگر: echo, onyx, fabel, nova, shimmer
+                input=ai_text_response,
+                response_format="mp3" # فرمت خروجی صوتی چابک و سبک
+            )
+            
+            # ۳. ارسال دیتای باینری صدا از طریق وب‌سوکت به فرانت‌آند
+            # کلاینت فرانت‌آند بلافاصله این را دریافت و پخش می‌کند
+            await websocket.send_bytes(audio_response.content)
+            
+    except WebSocketDisconnect:
+        print("Client disconnected")
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        await websocket.close()
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 خیلی خوب. مسیر C یعنی:
 - دستیار شخصی / عمومی
 - با حافظه
