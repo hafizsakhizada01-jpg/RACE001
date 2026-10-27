@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دستیار صوتی متصل به هوش مصنوعی زنده</title>
+    <title>دستیار صوتی هوشمند</title>
     <style>
         * {
             margin: 0;
@@ -70,7 +70,6 @@
             letter-spacing: 2px;
             color: #00f2fe;
             font-weight: bold;
-            text-transform: uppercase;
             text-shadow: 0 0 15px rgba(0, 242, 254, 0.6);
         }
         .caption-box {
@@ -97,18 +96,10 @@
             box-shadow: 0 0 30px rgba(0, 242, 254, 0.4);
             transition: all 0.3s ease;
         }
-        .glow-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 45px rgba(0, 242, 254, 0.8);
-        }
         .listening {
             background: radial-gradient(circle, rgba(234, 179, 8, 0.8) 0%, rgba(234, 179, 8, 0.2) 60%, transparent 100%) !important;
             box-shadow: 0 0 90px 30px rgba(234, 179, 8, 0.5), inset 0 0 60px rgba(234, 179, 8, 0.6) !important;
             animation: pulse 1s infinite ease-in-out;
-        }
-        .processing {
-            background: radial-gradient(circle, rgba(168, 85, 247, 0.8) 0%, rgba(168, 85, 247, 0.2) 60%, transparent 100%) !important;
-            box-shadow: 0 0 90px 30px rgba(168, 85, 247, 0.5), inset 0 0 60px rgba(168, 85, 247, 0.6) !important;
         }
         .speaking {
             background: radial-gradient(circle, rgba(236, 72, 153, 0.8) 0%, rgba(236, 72, 153, 0.2) 60%, transparent 100%) !important;
@@ -135,7 +126,7 @@
             <div class="status-text" id="statusLabel">وضعیت: آماده به کار</div>
         </div>
 
-        <div class="caption-box" id="captionText">برای شروع دکمه زیر را فشار داده و هر چه می‌خواهید بپرسید...</div>
+        <div class="caption-box" id="captionText">برای شروع دکمه زیر را فشار داده و صحبت کنید...</div>
 
         <button class="glow-btn" id="actionBtn">شروع گفتگو</button>
     </div>
@@ -146,87 +137,82 @@
         const captionText = document.getElementById('captionText');
         const aiCore = document.getElementById('aiCore');
 
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        // استفاده از سیستم صوتی بازسازی شده سازگار با اندروید و آیفون
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+        let recognition = null;
 
         if (SpeechRecognition) {
-            const recognition = new SpeechRecognition();
+            recognition = new SpeechRecognition();
             recognition.lang = 'fa-IR';
             recognition.continuous = false;
-
-            actionBtn.addEventListener('click', () => {
-                try { recognition.start(); } catch(e) {}
-            });
+            recognition.interimResults = false;
 
             recognition.onstart = () => {
                 statusLabel.innerText = "وضعیت: در حال شنیدن...";
                 statusLabel.style.color = "#eab308";
-                captionText.innerText = "در حال گوش دادن به صدای شما...";
+                captionText.innerText = "دستیار در حال گوش دادن است...";
                 aiCore.className = "ai-core listening";
             };
 
-            recognition.onresult = async (event) => {
-                const userSpeech = event.results[0][0].transcript;
-                captionText.innerText = "شما گفتید: " + userSpeech;
-                statusLabel.innerText = "وضعیت: اتصال به مغز هوش مصنوعی...";
-                statusLabel.style.color = "#a855f7";
-                aiCore.className = "ai-core processing";
-
-                // ارسال متن به هوش مصنوعی آنلاین
-                await askAI(userSpeech);
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                captionText.innerText = "شما گفتید: " + text;
+                processSpeech(text);
             };
 
-            recognition.onerror = () => {
-                resetToReady("متوجه صدا نشدم، دوباره تلاش کنید.");
+            recognition.onerror = (e) => {
+                console.error(e);
+                resetToReady("خطا در سیستم صوتی. لطفاً مطمئن شوید دسترسی به میکروفون باز است.");
             };
-        } else {
-            actionBtn.addEventListener('click', () => {
-                captionText.innerText = "مرورگر شما از سیستم تشخیص صدا پشتیبانی نمی‌کند.";
-            });
         }
 
-        // بخش اتصال به موتور هوش مصنوعی آنلاین و متن‌باز
-        async urban askAI(prompt) {
-            try {
-                // استفاده از API عمومی و رایگان برای دریافت پاسخ هوشمند
-                const response = await fetch(`https://duckduckgo.com{encodeURIComponent(prompt)}&format=json`);
-                const data = await response.json();
-                
-                let aiReply = "";
-                if (data.AbstractText) {
-                    aiReply = data.AbstractText;
-                } else if (data.RelatedTopics && data.RelatedTopics.length > 0) {
-                    aiReply = data.RelatedTopics[0].Text;
-                } else {
-                    aiReply = "من متوجه این سوال شدم، اما اطلاعات دقیقی در اینترنت برای آن پیدا نکردم. لطفاً سوال دیگری بپرسید.";
+        actionBtn.addEventListener('click', () => {
+            // فعال‌سازی اولیه موتور صوتی برای دور زدن محدودیت مرورگر موبایل
+            window.speechSynthesis.cancel();
+            
+            if (recognition) {
+                try {
+                    recognition.start();
+                } catch(e) {
+                    recognition.stop();
                 }
-
-                // کوتاه کردن متن برای خوانش بهتر صوتی
-                aiReply = aiReply.substring(0, 200);
-                speakOutput(aiReply);
-
-            } catch (error) {
-                // پاسخ شبیه‌سازی‌شده هوشمند محلی در صورت اختلال در شبکه
-                let fallbackReply = "در حال حاضر سیستم من به سرور مرکزی متصل است. من درخواست شما را کاملاً متوجه شدم.";
-                if(prompt.includes("آب و هوا")) fallbackReply = "هوای امروز صاف و برای فعالیت‌های هوشمند شما کاملاً مناسب است.";
-                if(prompt.includes("خالق") || prompt.includes("ساخته")) fallbackReply = "من توسط شما و بر پایه کدهای پیشرفته گیت‌هاب برنامه‌نویسی شده‌ام.";
-                
-                speakOutput(fallbackReply);
+            } else {
+                // راهکار جایگزین در صورت مسدود بودن کامل میکروفون توسط مرورگر گوشی
+                const testText = prompt("سیستم تشخیص خودکار صدا مسدود است. سوال خود را اینجا تایپ کنید:");
+                if(testText) processSpeech(testText);
             }
+        });
+
+        function processSpeech(text) {
+            statusLabel.innerText = "وضعیت: در حال پردازش...";
+            statusLabel.style.color = "#a855f7";
+            
+            let reply = "درخواست شما دریافت شد. من یک دستیار صوتی هوشمند هستم.";
+            if(text.includes("سلام")) reply = "سلام! روز شما بخیر. چطور می‌توانم کمکتان کنم؟";
+            if(text.includes("چطوری") || text.includes("حالت چطوره")) reply = "سیستم من کاملاً پایدار و آماده به کار است.";
+            if(text.includes("اسم") || text.includes("نام")) reply = "من دستیار صوتی اختصاصی شما هستم.";
+
+            setTimeout(() => {
+                speakOutput(reply);
+            }, 800);
         }
 
         function speakOutput(text) {
+            // موتور صوتی تقویت شده فارسی
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'fa-IR';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
             
             utterance.onstart = () => {
                 statusLabel.innerText = "وضعیت: در حال پاسخ‌دهی...";
                 statusLabel.style.color = "#ec4899";
-                captionText.innerText = "پاسخ هوش مصنوعی: " + text;
+                captionText.innerText = "پاسخ دستیار: " + text;
                 aiCore.className = "ai-core speaking";
             };
 
             utterance.onend = () => {
-                resetToReady("آماده گفتگو مجدد.");
+                resetToReady("آماده برای گفتگوی بعدی.");
             };
 
             window.speechSynthesis.speak(utterance);
