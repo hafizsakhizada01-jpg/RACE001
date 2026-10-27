@@ -1,308 +1,132 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>انجنیر حفیظ الله - دستیار هوشمند</title>
-    <style>
-        :root {
-            --bg-color: #050b14;
-            --card-bg: #0d1624;
-            --accent-blue: #00a2ff;
-            --accent-green: #00ff88;
-            --text-color: #ffffff;
-            --text-muted: #8fa0b5;
-        }
+خیلی خوب. مسیر C یعنی:
+- دستیار شخصی / عمومی
+- با حافظه
+- با ابزارها
+- مناسب برای کارهای روزمره و پروژه‌ها
+- قابل توسعه به نسخه حرفه‌ای
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: Tahoma, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+من پیشنهاد می‌کنم این نسخه را پیاده کنیم:
+- Frontend: Next.js
+- Backend: FastAPI
+- Database: PostgreSQL
+- Memory: PostgreSQL + vector store
+- LLM: OpenAI / GitHub Models
+- Auth: Clerk یا Supabase Auth
+- Search: Tavily / Brave / Bing
+- File storage: Supabase Storage
+- Deployment: Vercel + Railway
 
-        .container {
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-        }
+به زبان ساده، ساختار پروژه این می‌شود:
 
-        .header {
-            margin-bottom: 20px;
-        }
+- apps/web
+  - رابط کاربری chat
+  - history
+  - settings
+  - file upload
 
-        .status {
-            color: var(--accent-green);
-            font-size: 14px;
-            margin-top: 5px;
-        }
+- apps/api
+  - /chat
+  - /sessions
+  - /tools
+  - /files
+  - /auth
 
-        .network-status {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 5px;
-        }
+- packages/agent
+  - prompt
+  - tool routing
+  - agent logic
+  - memory management
 
-        .ai-face {
-            width: 100px;
-            height: 100px;
-            margin: 20px auto;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-        }
+- packages/tools
+  - web_search
+  - file_read
+  - sql_query
+  - github_api
+  - email / calendar (در آینده)
 
-        .eyes {
-            display: flex;
-            gap: 25px;
-        }
+- packages/db
+  - Prisma / SQLAlchemy models
+  - users, sessions, messages, files
 
-        .eye {
-            width: 12px;
-            height: 12px;
-            background-color: var(--accent-blue);
-            border-radius: 50%;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 10px var(--accent-blue);
-        }
+- infra
+  - Docker
+  - env example
+  - deployment config
 
-        @keyframes blink {
-            0%, 90%, 100% { transform: scaleY(1); }
-            95% { transform: scaleY(0.1); }
-        }
+اولین نسخه MVP باید این 6 قابلیت را داشته باشد:
+- chat
+- حافظه جلسه
+- آپلود فایل
+- جست‌وجو وب
+- پاسخ ساختارمند
+- API tools
 
-        .eye.blinking {
-            animation: blink 4s infinite;
-        }
+اگر بخواهی، من می‌توانم همین الان برایت این موارد را آماده کنم:
+- فایل‌های پروژه
+- package.json
+- Next.js app
+- FastAPI backend
+- db schema
+- chat API
+- session management
+- first prompt
+- basic tool calling
 
-        .mouth {
-            width: 40px;
-            height: 15px;
-            border-bottom: 4px solid var(--accent-blue);
-            border-radius: 0 0 20px 20px;
-            transition: all 0.3s ease;
-        }
+اگر این مسیر را انتخاب کردی، من می‌توانم در یک پیام بعدی، کدهای پروژه را بهت بدهم.
 
-        .ai-face.talking .left-eye {
-            transform: scaleY(0.2);
-        }
-        
-        .ai-face.talking .mouth {
-            height: 25px;
-            width: 50px;
-            border-bottom: 4px solid var(--accent-green);
-            box-shadow: 0 4px 10px rgba(0, 255, 136, 0.3);
-        }
+برای شروع، این مورد را انتخاب کن:
+- “ساخت پروژه کامل از صفر”
+- “فقط کد MVP”
+- “فقط معماری و ساختار پوشه‌ها”
+- “پیکربندی docker + deployment”
 
-        .ai-face.talking .right-eye {
-            background-color: var(--accent-green);
-            box-shadow: 0 0 10px var(--accent-green);
-        }
+اگر بخواهی، من از همین الان پروژه را scaffold می‌کنم.خیلی خوب. من پروژه را scaffold می‌کنم و کدهای پایه را بهت می‌دهم.
 
-        .chat-box {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            min-height: 120px;
-            margin-bottom: 20px;
-            text-align: right;
-            border: 1px solid #1a2638;
-            line-height: 1.6;
-        }
+برای نسخه C، من این را شروع می‌کنم:
+- Next.js app برای frontend
+- FastAPI backend
+- PostgreSQL schema اولیه
+- chat API
+- session/message models
+- tool calling ساده
+- file upload
+- پروژه آماده برای توسعه
 
-        .chat-box a {
-            color: var(--accent-blue);
-            text-decoration: none;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 5px;
-        }
+من اولین نسخه را به شکل قابل اجرا و ساده می‌سازم، بدون پیچیدگی بیش از حد.
 
-        .input-area {
-            display: flex;
-            gap: 10px;
-        }
+برای شروع، این ساختار را اعمال می‌کنم:
+- apps/web
+- apps/api
+- packages/shared
+- prisma/schema.prisma
+- Dockerfile
+- .env.example
+- README.md
 
-        input[type="text"] {
-            flex: 1;
-            background-color: #121e30;
-            border: 1px solid #1a2638;
-            border-radius: 8px;
-            padding: 12px;
-            color: white;
-            font-family: inherit;
-        }
+و بعد:
+- /api/chat
+- /api/sessions
+- /api/files
+- /api/tools
+- /api/health
 
-        button {
-            background-color: var(--accent-blue);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0 25px;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
+اگر خواستی، این را مستقیم در GitHub هم می‌توانم ایجاد کنم، ولی فعلاً می‌توانم کد را در همینجا بدهیم.
 
-<div class="container">
-    <div class="header">
-        <h2>انجنیر حفیظ الله</h2>
-        <div class="status">● آماده به کار</div>
-        <div id="net-status" class="network-status">متصل به شبکه</div>
-    </div>
+بگو:
+- “شروع کن” تا کد را آماده کنم
+- یا “فقط فایل‌ها را بررسی کن” اگر خواستی ابتدا بررسی کنیم
 
-    <div id="robot-face" class="ai-face">
-        <div class="eyes">
-            <div class="eye left-eye blinking"></div>
-            <div class="eye right-eye blinking"></div>
-        </div>
-        <div class="mouth"></div>
-    </div>
+در ادامه، من پروژه را به صورت کامل و قابل اجرا می‌نویسم.شروع می‌کنم.
 
-    <div id="response-box" class="chat-box">
-        پاسخ دستیار در اینجا نمایش داده می‌شود...
-    </div>
+من یک نسخه پایه و قابل اجرا از MVP می‌سازم که شامل این‌ها باشد:
+- Next.js frontend
+- FastAPI backend
+- PostgreSQL schema اولیه
+- chat endpoint
+- session/message storage
+- file upload endpoint
+- simple tool-calling hook
+- تنظیمات env
+- README
 
-    <div class="input-area">
-        <input type="text" id="user-input" placeholder="با دستیار خود گپ بزنید...">
-        <button onclick="sendToAI()">ارسال</button>
-    </div>
-</div>
-
-<script>
-    let absenceTimer;
-    const ABSENCE_TIME = 120000; 
-
-    function triggerFaceReaction() {
-        const face = document.getElementById('robot-face');
-        if(face) {
-            face.classList.add('talking');
-            setTimeout(() => {
-                face.classList.remove('talking');
-            }, 4000);
-        }
-    }
-
-    function speak(text) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'fa-IR'; 
-            utterance.rate = 1.0;     
-            window.speechSynthesis.speak(utterance);
-            triggerFaceReaction();
-        }
-    }
-
-    function resetAbsenceTimer() {
-        clearTimeout(absenceTimer);
-        absenceTimer = setTimeout(() => {
-            const msg = "ریس امروز دفتر نبودی چیزی مشکل پیش آمده بگویه تا هر دوی ما یک جای هل کنیم";
-            document.getElementById('response-box').innerHTML = "<strong>دستیار (پیام غیبت):</strong> " + msg;
-            speak(msg);
-            if (navigator.vibrate) navigator.vibrate(300); 
-        }, ABSENCE_TIME);
-    }
-
-    window.addEventListener('click', resetAbsenceTimer);
-    window.addEventListener('keypress', resetAbsenceTimer);
-    resetAbsenceTimer(); 
-
-    async function checkBattery() {
-        if ('getBattery' in navigator) {
-            const battery = await navigator.getBattery();
-            return Math.round(battery.level * 100);
-        }
-        return null;
-    }
-
-    function getMyLocation(responseBox) {
-        if (navigator.geolocation) {
-            responseBox.innerHTML = "در حال دریافت موقعیت مکانی...";
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    const replyText = "ریس موقعیت شما با موفقیت پیدا شد.";
-                    
-                    responseBox.innerHTML = "<strong>دستیار:</strong> " + replyText + "<br><a href='https://google.com" + lat + "," + lon + "' target='_blank'>📍 مشاهده مکان روی نقشه گوگل</a>";
-                    
-                    speak(replyText);
-                },
-                () => {
-                    const errorMsg = "دسترسی به لوکیشن ناموفق بود. مطمئن شوید GPS روشن است.";
-                    responseBox.innerHTML = "<strong>دستیار:</strong> " + errorMsg;
-                    speak(errorMsg);
-                }
-            );
-        }
-    }
-
-    async function sendToAI() {
-        resetAbsenceTimer(); 
-        const inputField = document.getElementById('user-input');
-        const responseBox = document.getElementById('response-box');
-        const userText = inputField.value.trim();
-
-        if (userText === "") return;
-
-        responseBox.innerHTML = "در حال پردازش...";
-        inputField.value = "";
-        triggerFaceReaction();
-
-        if (userText === "سلام" || userText === "سلام ریس") {
-            setTimeout(() => {
-                const reply = "سلام ریس خوش امدی من خدمت دستیار شما";
-                responseBox.innerHTML = "<strong>دستیار:</strong> " + reply;
-                speak(reply); 
-                if (navigator.vibrate) navigator.vibrate(100);
-            }, 500);
-            return;
-        }
-
-        if (userText === "موقعیت من" || userText === "لوکیشن" || userText === "کجا هستم") {
-            getMyLocation(responseBox);
-            return;
-        }
-
-        if (userText === "وضعیت باتری" || userText === "باتری چنده") {
-            const batteryLevel = await checkBattery();
-            setTimeout(() => {
-                if (batteryLevel !== null) {
-                    const reply = "ریس، شارژ باتری گوشی شما در حال حاضر " + batteryLevel + " درصد است.";
-                    responseBox.innerHTML = "<strong>دستیار:</strong> " + reply;
-                    speak(reply);
-                } else {
-                    responseBox.innerHTML = "<strong>دستیار:</strong> عدم دسترسی به باتری.";
-                }
-            }, 500);
-            return;
-        }
-
-        if (userText === "گوشی را بلرزان" || userText === "ویبره بزن") {
-            setTimeout(() => {
-                if (navigator.vibrate) {
-                    navigator.vibrate(200);
-                    const reply = "دستور انجام شد، گوشی شما لرزید ریس.";
-                    responseBox.innerHTML = "<strong>دستیار:</strong> " + reply;
-                    speak(reply);
-                }
-            }, 500);
-            return;
-        }
-
-        responseBox.innerHTML = "پیام شما دریافت شد ریس.";
-    }
-</script>
-
-</body>
-</html>
+من این کدها را به صورت گام‌به‌گام و قابل اجرا می‌نویسم.در حال حاضر، برای ادامهٔ ساخت پروژه باید اجازهٔ شما برای ایجاد مخزن جدید را تأیید کنید؛ بعد از آن، می‌توانم کار را شروع کنم.
