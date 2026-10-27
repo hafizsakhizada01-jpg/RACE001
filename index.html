@@ -152,13 +152,24 @@
         <button class="glow-btn" id="actionBtn">شروع گفتگو با دستیار</button>
     </div>
 
+    <!-- المان صوتی برای پخش فیزیکی صدا روی گوشی -->
+    <audio id="backupAudio" preload="auto"></audio>
+
     <script>
         const actionBtn = document.getElementById('actionBtn');
         const statusLabel = document.getElementById('statusLabel');
         const captionText = document.getElementById('captionText');
         const aiCore = document.getElementById('aiCore');
+        const backupAudio = document.getElementById('backupAudio');
 
         actionBtn.addEventListener('click', () => {
+            // فعال‌سازی اولیه فایل صوتی برای باز کردن قفل بلندگوی موبایل
+            backupAudio.src = "https://google.com";
+            backupAudio.volume = 0.01; // صدای بسیار کم فقط برای باز شدن قفل
+            backupAudio.play().then(() => {
+                backupAudio.pause();
+            }).catch(e => console.log(e));
+
             const userQuestion = prompt("رئیس، دستور خود را اینجا بنویسید:");
             
             if (userQuestion && userQuestion.trim() !== "") {
@@ -172,7 +183,6 @@
             statusLabel.style.color = "#f59e0b";
             aiCore.className = "ai-core processing";
             
-            // تنظیم پاسخ پیش‌فرض و وفادارانه برای رئیس
             let reply = "رئیس من، در خدمتم! هر دستوری بفرمایید اجرا می‌کنم.";
             
             if(text.includes("سلام") || text.includes("درود")) {
@@ -194,19 +204,27 @@
             captionText.innerText = "پاسخ دستیار: " + text;
             aiCore.className = "ai-core speaking";
             
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'fa-IR';
-                utterance.rate = 0.95;
-                
-                utterance.onend = () => { resetToReady(); };
-                utterance.onerror = () => { resetToReady(); };
-                
-                window.speechSynthesis.speak(utterance);
-            } else {
-                setTimeout(resetToReady, 4000);
-            }
+            // روش اول: استفاده از موتور صوتی آنلاین
+            const streamUrl = `https://google.com{encodeURIComponent(text)}`;
+            backupAudio.src = streamUrl;
+            backupAudio.volume = 1.0;
+            
+            backupAudio.play().then(() => {
+                backupAudio.onended = () => { resetToReady(); };
+            }).catch(() => {
+                // روش دوم: اگر روش آنلاین در گیت‌هاب مسدود شد، از موتور داخلی مرورگر استفاده کند
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'fa-IR';
+                    utterance.rate = 0.95;
+                    utterance.onend = () => { resetToReady(); };
+                    utterance.onerror = () => { resetToReady(); };
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    setTimeout(resetToReady, 4000);
+                }
+            });
         }
 
         function resetToReady() {
