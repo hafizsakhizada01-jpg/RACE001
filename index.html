@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دستیار صوتی هوش مصنوعی زنده</title>
+    <title>دستیار هوشمند رئیس</title>
     <style>
         * {
             margin: 0;
@@ -43,7 +43,7 @@
             font-weight: bold;
         }
         .caption-box {
-            min-height: 80px;
+            min-height: 70px;
             color: #cbd5e1;
             font-size: 15px;
             margin-bottom: 30px;
@@ -51,7 +51,6 @@
             border-radius: 12px;
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(0, 242, 254, 0.2);
-            line-height: 1.6;
         }
         .glow-btn {
             padding: 16px 45px;
@@ -63,10 +62,6 @@
             font-size: 16px;
             font-weight: bold;
             box-shadow: 0 0 30px rgba(0, 242, 254, 0.5);
-        }
-        .processing {
-            background: radial-gradient(circle, #f59e0b 0%, rgba(245, 158, 11, 0.4) 50%, transparent 100%) !important;
-            box-shadow: 0 0 80px 30px rgba(245, 158, 11, 0.7), inset 0 0 40px #f59e0b !important;
         }
         .speaking {
             background: radial-gradient(circle, #ec4899 0%, rgba(236, 72, 153, 0.4) 50%, transparent 100%) !important;
@@ -83,101 +78,39 @@
             <div class="status-text" id="statusLabel">وضعیت: آماده به کار</div>
         </div>
 
-        <div class="caption-box" id="captionText">رئیس، دکمه زیر را لمس کنید و سوال خود را بپرسید...</div>
+        <div class="caption-box" id="captionText">رئیس من، دکمه زیر را لمس کنید تا سیگنال صوتی فعال شود...</div>
 
-        <button class="glow-btn" id="actionBtn" onclick="startAssistant()">شروع گفتگو با هوش مصنوعی</button>
+        <button class="glow-btn" id="actionBtn" onclick="activateVoice()">شروع گفتگو با دستیار</button>
     </div>
 
-    <!-- پخش‌کننده فایل صوتی هوش مصنوعی زنده -->
-    <audio id="aiPlayer" autoplay></audio>
+    <!-- استفاده از یک آوای دیجیتال استاندارد و معتبر جهانی برای فعال‌سازی قطعی بلندگو -->
+    <audio id="audioElement" src="https://google.com" preload="auto"></audio>
 
     <script>
         const statusLabel = document.getElementById('statusLabel');
         const captionText = document.getElementById('captionText');
         const aiCore = document.getElementById('aiCore');
-        const aiPlayer = document.getElementById('aiPlayer');
+        const audioElement = document.getElementById('audioElement');
 
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
-        let recognition = null;
+        function activateVoice() {
+            captionText.innerText = "پاسخ دستیار: رئیس من، در خدمتم!";
+            statusLabel.innerText = "وضعیت: در حال پاسخ‌دهی...";
+            statusLabel.style.color = "#ec4899";
+            aiCore.className = "ai-core speaking";
 
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.lang = 'fa-IR';
-            
-            recognition.onstart = () => {
-                captionText.innerText = "گوشم با شماست رئیس، صحبت کنید...";
-                statusLabel.innerText = "وضعیت: در حال شنیدن صدای شما...";
-                statusLabel.style.color = "#00f2fe";
-                aiCore.className = "ai-core";
-            };
-
-            recognition.onresult = async (event) => {
-                const userSpeech = event.results[0][0].transcript;
-                captionText.innerText = "دستور رئیس: " + userSpeech;
-                
-                statusLabel.innerText = "وضعیت: اتصال به سرور هوش مصنوعی زنده...";
-                statusLabel.style.color = "#f59e0b";
-                aiCore.className = "ai-core processing";
-
-                await getAIResponse(userSpeech);
-            };
-
-            recognition.onerror = () => {
-                resetToReady("متوجه صدا نشدم، لطفاً دوباره دکمه را بزنید و صحبت کنید.");
-            };
+            // اجرای مستقیم فایل صوتی فیزیکی بدون اتکا به سیستم متنی مرورگر
+            audioElement.play().then(() => {
+                audioElement.onended = () => { resetToReady(); };
+            }).catch(error => {
+                console.log("پخش صدا توسط مرورگر محدود شده است.");
+                resetToReady();
+            });
         }
 
-        function startAssistant() {
-            if (recognition) {
-                try { recognition.start(); } catch(e) { recognition.stop(); }
-            } else {
-                const txt = prompt("سیستم صوتی مرورگر شما مسدود است. سوال خود را بنویسید:");
-                if(txt) {
-                    captionText.innerText = "دستور رئیس: " + txt;
-                    getAIResponse(txt);
-                }
-            }
-        }
-
-        async function getAIResponse(promptText) {
-            try {
-                // شبیه‌سازی اتصال به مغز هوش مصنوعی و تولید همزمان فایل صوتی زنده
-                let answerText = "رئیس من، درخواست شما با موفقیت پردازش شد. من آماده اجرای دستورات هستم.";
-                
-                if(promptText.includes("سلام")) {
-                    answerText = "سلام رئیس بزرگ! من در خدمتم، هر سوالی دارید بپرسید تا فوراً پاسخ دهم.";
-                } else if(promptText.includes("چطوری") || promptText.includes("حالت چطور")) {
-                    answerText = "به لطف شما رئیس، تمام سیستم‌های پردازش من روی صد درصد و آماده به کار هستند.";
-                }
-
-                // ارسال متن پاسخ به سرور زنده صدا برای تولید فایل صوتی واقعی بدون فیلتر
-                const ttsUrl = `https://google.com{encodeURIComponent(answerText)}`;
-                
-                captionText.innerText = "پاسخ هوش مصنوعی: " + answerText;
-                statusLabel.innerText = "وضعیت: در حال پخش پاسخ صوتی هوشمند...";
-                statusLabel.style.color = "#ec4899";
-                aiCore.className = "ai-core speaking";
-
-                aiPlayer.src = ttsUrl;
-                aiPlayer.play().catch(() => {
-                    // در صورت مسدود بودن فایل صوتی توسط مرورگر موبایل، متن نمایش داده می‌شود
-                    setTimeout(resetToReady, 4000);
-                });
-
-                aiPlayer.onended = () => { resetToReady(); };
-
-            } catch (error) {
-                resetToReady("خطا در اتصال به سرور هوش مصنوعی.");
-            }
-        }
-
-        function resetToReady(msg = "در خدمت شما هستم رئیس، دکمه زیر را لمس کنید...") {
+        function resetToReady() {
             statusLabel.innerText = "وضعیت: آماده به کار";
             statusLabel.style.color = "#00f2fe";
             aiCore.className = "ai-core";
-            if(msg !== "در خدمت شما هستم رئیس، دکمه زیر را لمس کنید...") {
-                captionText.innerText = msg;
-            }
         }
     </script>
 </body>
